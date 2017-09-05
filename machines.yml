@@ -5,17 +5,37 @@
 #   memory: 1024
 #   cpu: 1
 #   int_net: DHCPScope
-#   ip_addr: 192.168.100.100
-#   provision: kvm.yml
+#  ip_addr:
+#    - 192.168.100.101
+# nicpromisc:
+#   - --nicpromisc2
+#   ansible: kvm.yml
+#   shell: kvm.yml
 #   sync_disabled: false
 #   gui: true
-- name: centos-01
+- name: mgmt
   box: centos/7
   memory: 1024
   cpu: 1
-  ip_addr: 192.168.100.101
-- name: ansible-01
+  ip_addr:
+    - 192.168.100.10
+  shell: provisioning/mgmt.sh
+  sync_disabled: false
+- name: lb
   box: centos/7
-  memory: 1024
+  memory: 512
   cpu: 1
-  ip_addr: 192.168.100.100
+  ip_addr:
+    - 192.168.100.100
+- name: web1
+  box: centos/7
+  memory: 512
+  cpu: 1
+  ip_addr:
+    - 192.168.100.101
+- name: web2
+  box: centos/7
+  memory: 512
+  cpu: 1
+  ip_addr:
+    - 192.168.100.102

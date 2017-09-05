@@ -30,7 +30,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       # Configure default synced folder (disable by default)
       if machine['sync_disabled'] != nil
-        srv.vm.synced_folder '.', '/vagrant', disabled: machine['sync_disabled']
+        srv.vm.synced_folder '.', '/vagrant', disabled: machine['sync_disabled'], type: "virtualbox"
       else
         srv.vm.synced_folder '.', '/vagrant', disabled: true
       end #if machine['sync_disabled']
@@ -41,7 +41,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           srv.vm.network :private_network, ip: machine['ip_addr'],
           virtualbox__intnet: "DHCPScope"
         else
-          srv.vm.network 'private_network', ip: machine['ip_addr']
+          machine['ip_addr'].each do |ip_addr|
+            srv.vm.network 'private_network', ip: ip_addr
+          end # machine['ip_addr'].each
         end #if machine['int_net']
       end # if machine['ip_addr']
 
@@ -59,17 +61,28 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         # use the host's DNS API to query the information
         vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
         vb.linked_clone = true if Vagrant::VERSION =~ /^1.8/
+		# Additional nicpromisc command
+		if machine['nicpromisc'] != nil
+		  machine['nicpromisc'].each do |command|
+		    vb.customize ["modifyvm", :id, command, "allow-all"]
+		  end # machine['nicpromisc'].each
+		end # machine['nicpromisc']
       end
 
       # Provision the VM with Ansible if enabled in machines.yml
-      if machine['provision'] != nil
+      if machine['ansible'] != nil
         srv.vm.provision :ansible_local do |ansible|
-          ansible.playbook       = machine['provision']
+          ansible.playbook       = machine['ansible']
           ansible.verbose        = true
           ansible.install        = true
           ansible.limit          = "all" # or only "nodes" group, etc.
           ansible.inventory_path = "provisioning/staging"
-        end #machine.vm.provision
+        end #machine.vm.ansible
+      end # if machine['provision']
+
+      # Provision the VM with Shell if enabled in machines.yml
+      if machine['shell'] != nil
+        srv.vm.provision "shell", path: machine['shell']
       end # if machine['provision']
     end # config.vm.define
   end # machines.each
