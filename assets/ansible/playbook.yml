@@ -1,0 +1,5 @@
+---
+- hosts: web1
+  roles:
+    - dev-sec.os-hardening
+    - openmicroscopy.local-accounts

@@ -1,6 +1,10 @@
 [lb]
-lb
+lb1 ansible_ssh_host=192.168.100.100
 
 [web]
-web1
-web2
+web1 ansible_ssh_host=192.168.100.101
+web2 ansible_ssh_host=192.168.100.102
+web3 ansible_ssh_host=192.168.100.103
+
+[local]
+127.0.0.1

@@ -28,11 +28,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       srv.vm.hostname = machine['name']
       srv.vm.box = machine['box']
 
-      # Configure default synced folder (disable by default)
-      if machine['sync_disabled'] != nil
-        srv.vm.synced_folder '.', '/vagrant', disabled: machine['sync_disabled'], type: "virtualbox"
-      else
+      # Configure default synced folder (enable by default)
+      if machine['sync_disabled'] == true
         srv.vm.synced_folder '.', '/vagrant', disabled: true
+      else
+        srv.vm.synced_folder '.', '/vagrant', disabled: machine['sync_disabled'], type: "virtualbox"
       end #if machine['sync_disabled']
 
       # Assign additional private network

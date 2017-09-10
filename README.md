@@ -17,6 +17,8 @@ executing ansible-playbook directly on the guest machine.
 ```
 Vagrantfile
 provisioning
+ansible/
+    group_vars            # group variables
     roles/
         common/               # this hierarchy represents a "role"
             tasks/            #
@@ -57,21 +59,25 @@ set PATH=%PATH%;C:\Program Files (x86)\PuTTY
 Start up server instance with `vagrant up`
 
 ## Ansible
-### Firsts steps
-Populate  known_hosts file with `ssh-keyscan lb web1 web2 >> .ssh/known_hosts`. This eliminates `The authenticity of host 'web1 (192.168.100.101)' can't be established.` eror.
+### Terms
+* **Controller Machine**: the machine where Ansible is installed, responsible for running the provisioning on the servers you are managing
+* **Inventory**: an INI file that contains information about the servers you are managing
+Playbook: the entry point for Ansible provisionings, where the automation is defined through tasks using YAML format
+* **Task**: a block that defines a single procedure to be executed, e.g.: install a package
+* **Module**: a module typically abstracts a system task, like dealing with packages or creating and changing files. Ansible has a multitude of built-in modules, but you can also create custom ones
+* **Role**: a pre-defined way for organizing playbooks and other files in order to facilitate sharing and reusing portions of a provisioning
+* **Play**: a provisioning executed from start to finish is called a play
+* **Facts**: global variables containing information about the system, like network interfaces or operating system
+* **Handlers**: used to trigger service status changes, like restarting or stopping a service
 
-Generate a new key with `ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa -q`. -N "" tells it to use an empty passsphrase, -q for silent.
+### Vagrant
+mgmt.sh script creates new RSA keys and copies it for the injection script for all other hosts.
 
-Distribute ssh-keys to hosts:
-```Bash
-ansible-playbook ssh-addkey.yml --ask-pass
-```
+### Hardening
 
-From Host cmd, copy over private key.
-```Bash
-#   fire: "C:\Users\dominic\.vagrant.d\insecure_private_key"
-vagrant scp "C:\Users\dominic\.vagrant.d\insecure_private_key" [mgmt]:~/.ssh
-**TODO**
+sudo ansible-galaxy install dev-sec.os-hardening
+sudo ansible-galaxy install openmicroscopy.local-accounts
+
 
 
 ## References

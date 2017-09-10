@@ -20,22 +20,24 @@
   ip_addr:
     - 192.168.100.10
   shell: provisioning/mgmt.sh
-  sync_disabled: false
 - name: lb
   box: centos/7
   memory: 512
   cpu: 1
   ip_addr:
     - 192.168.100.100
+  shell: provisioning/injection.sh
 - name: web1
   box: centos/7
   memory: 512
   cpu: 1
   ip_addr:
     - 192.168.100.101
+  shell: provisioning/injection.sh
 - name: web2
   box: centos/7
   memory: 512
   cpu: 1
   ip_addr:
     - 192.168.100.102
+  shell: provisioning/injection.sh

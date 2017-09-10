@@ -1,0 +1,5 @@
+---
+# http://docs.ansible.com/ansible/latest/galaxy.html#dependencies
+dependencies:
+  - dev-sec.os-hardening
+  - openmicroscopy.local-accounts

@@ -12,15 +12,15 @@ yum install epel-release -y
 # install the epel-release RPM if needed on CentOS
 yum install ansible -y
 
-# Copy files
-cp -a /vagrant/assets/ansible/* /home/vagrant
-chown -R vagrant:vagrant /home/vagrant
-rm -f /home/vagrant/.ssh/id_rsa
-mv /home/vagrant/insecure_private_key /home/vagrant/.ssh/id_rsa
-chmod 600 /home/vagrant/.ssh/id_rsa
+# Create key for nodes
+[ -f /home/vagrant/.ssh/id_rsa ] && rm -f /home/vagrant/.ssh/id_rsa
+sudo -u vagrant ssh-keygen -t rsa -f /home/vagrant/.ssh/id_rsa -q -P ""
 
-cat << 'EOF' >> /etc/hosts
-192.168.100.100    lb
-192.168.100.101    web1
-192.168.100.102    web2
-EOF
+# copy to shared folder
+cp /home/vagrant/.ssh/id_rsa.pub /vagrant/assets/ansible/dyn_pub_key
+
+# add to localhost as well
+sh /vagrant/provisioning/injection.sh
+
+# only allow mgmt server to login with this key
+sed -i '1s/^/from="192.168.100.10" /' /vagrant/assets/ansible/dyn_pub_key

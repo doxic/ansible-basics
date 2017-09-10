@@ -1,0 +1,9 @@
+---
+ansible_ssh_user: vagrant
+local_accounts_create:
+  - user: dominic
+    uid: 1010
+    groups: wheel
+    sshpubkey: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCkT4Ctnu+HJ1F4nIQ+YPBMQyNzAtDAkrIa4QSJ2RFgRG8U3gaVQT4ABtMT/qNUdHQcbccdSQWxmYY3vpuiXDxkJbbqXxNmBcCuRZnpD63Bh1Vyq1o1+WqXBpiCsDxfPHA4F8a549xWhCRSTNahmTDz5yV18t/xRG+ZX5KAGekPHRmdJrTr+xtr/BThVrkw4gZEdtLjGPQLqQkPKhO2ihvLoyPbNrPKBVUkfAoWP+zmsed3RxfqrP1XCsaRu9UqgtNnSRt7pUGj+QekfqW26ql22vktiXnBbWyl8BXmpJBJwrqkpFVqdwdjBGOHmBKt/FERFjvBJqrNcn34XXNy7QDl vagrant@mgmt"
+    # python -c 'import crypt; print crypt.crypt("test", crypt.mksalt(crypt.METHOD_SHA512))'
+    password: $6$Gcq9thi0Cdb2zSgM$md0mjF5yCIms/OWa8sK1h04pccxh2h5nhUkXaMTxiUrqlFZT.A/gUC5AI6K/jCrBFzREuVaTXOA3ULKz.JICZ1
