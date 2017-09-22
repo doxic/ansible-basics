@@ -17,7 +17,7 @@ machines = YAML.load_file(File.join(File.dirname(__FILE__), 'machines.yml'))
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Always use Vagrant's default insecure key
-  config.ssh.insert_key = false
+  config.ssh.insert_key = true
 
   # Iterate through entries in YAML file to create VMs
   machines.each do |machine|
@@ -32,7 +32,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       if machine['sync_disabled'] == true
         srv.vm.synced_folder '.', '/vagrant', disabled: true
       else
-        srv.vm.synced_folder '.', '/vagrant', disabled: machine['sync_disabled'], type: "virtualbox"
+        srv.vm.synced_folder '.', '/vagrant', disabled: machine['sync_disabled'], type: "virtualbox", mount_options: ["fmode=600"]
       end #if machine['sync_disabled']
 
       # Assign additional private network
@@ -69,14 +69,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 		end # machine['nicpromisc']
       end
 
+      # Ansible Parallel Execution from a Controller Guest
       # Provision the VM with Ansible if enabled in machines.yml
       if machine['ansible'] != nil
         srv.vm.provision :ansible_local do |ansible|
-          ansible.playbook       = machine['ansible']
-          ansible.verbose        = true
-          ansible.install        = true
-          ansible.limit          = "all" # or only "nodes" group, etc.
-          ansible.inventory_path = "provisioning/staging"
+          ansible.playbook          = machine['ansible']
+          ansible.verbose           = true
+          ansible.install           = true
+          ansible.limit             = "all" # or only "nodes" group, etc.
+          ansible.inventory_path    = "inventory"
+          ansible.provisioning_path = "/vagrant/provisioning"
         end #machine.vm.ansible
       end # if machine['provision']
 

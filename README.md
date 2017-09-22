@@ -43,6 +43,9 @@ Run elevated cmd with `cmd` [CTRL+ENTER].
 ```Bash
 @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
 ```
+### Ansible
+1. Turn on Developer mode (settings > update and security > for developers)
+2. PowerShell as admin and run `Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux`
 
 ### Kitchen
 Install ChefDK to get kitchen CI with `choco install chefdk -Y`

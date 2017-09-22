@@ -13,31 +13,32 @@
 #   shell: kvm.yml
 #   sync_disabled: false
 #   gui: true
-- name: mgmt
+- name: controller
   box: centos/7
   memory: 1024
   cpu: 1
   ip_addr:
     - 192.168.100.10
-  shell: provisioning/mgmt.sh
-- name: lb
-  box: centos/7
-  memory: 512
-  cpu: 1
-  ip_addr:
-    - 192.168.100.100
-  shell: provisioning/injection.sh
-- name: web1
+  #shell: provisioning/mgmt.sh
+  ansible: test.yml
+- name: node1
   box: centos/7
   memory: 512
   cpu: 1
   ip_addr:
     - 192.168.100.101
-  shell: provisioning/injection.sh
-- name: web2
+  #shell: provisioning/injection.sh
+- name: node2
   box: centos/7
   memory: 512
   cpu: 1
   ip_addr:
     - 192.168.100.102
-  shell: provisioning/injection.sh
+  #shell: provisioning/injection.sh
+- name: node3
+  box: centos/7
+  memory: 512
+  cpu: 1
+  ip_addr:
+    - 192.168.100.103
+  #shell: provisioning/injection.sh
