@@ -58,8 +58,6 @@ Add required vagrant boxes
 vagrant box add centos/7
 ```
 
-Install `vagrant plugin install vagrant-scp`
-
 Install plugin (broken for Win10/Win2016). Updates VBoxGuestAdditions on first boot
 ```Bash
 vagrant plugin install vagrant-vbguest
@@ -86,7 +84,7 @@ Playbook: the entry point for Ansible provisionings, where the automation is def
 * **Handlers**: used to trigger service status changes, like restarting or stopping a service
 
 ### Vagrant
-mgmt.sh script creates new RSA keys and copies it for the injection script for all other hosts.
+Environment variable for hosts file `export ANSIBLE_HOSTS=/vagrant/provisioning/inventory`
 
 ### Hardening
 
