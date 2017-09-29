@@ -1,0 +1,79 @@
+---
+- hosts: localhost
+
+  vars:
+  # python -c 'import crypt; print crypt.crypt("REPLACE_WITH_PASSWORD", crypt.mksalt(crypt.METHOD_SHA512))'
+  - root_password: $6$Cy3I6zl7kLUOn/5o$kh2qjHXH7QNqjVOUPtyh5YEpkK0oxZHp6S0wGZuQRbDHIsgeTYlNa60kmFHyfEwfjr8DQ3T/92fegP9OfGks0/
+  - local_accounts_create:
+    - user: dominic
+      groups: wheel
+      sshpubkey: "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAxrnYzsGQIw2j0GfHJh+te1wskKkxNijWuYNPpTmVRxU+XnkgWmMKPD+Pk6Sl8PjG070EUSibbYv7U4ZZ4/ybSsn7BTXjigzXAJdaIHZ8zRZV1LclChe5jtpJzqWxgg9ji/pY2rE3VHd74zJJxJb9pmp3iKGh1tY4zRcoyDsfo2/93UueXn03ZRtyD9NqP/lX00uZAZ0u0hnYFiXgLnXkTFn0GupCP5dNTreN5wT9B0uAiNNoTBtReMwNrofGMzdmY+J/kJ5vaBTdrjwdhScqXUl+YD65cJiMIBovTVeut6T0xFsFXXok4oeYdHUbI4238uL5/1hoan2KK3mcI/rztw== rsa-key-bootstrap"
+      # python -c 'import crypt; print crypt.crypt("REPLACE_WITH_PASSWORD", crypt.mksalt(crypt.METHOD_SHA512))'
+      password: $6$MDZgQU2aWT3/dyqh$nV.coXsDC.ds0/KCoSRs8xsaxYTgnGFpCe.kEoDl8tu4Qy/9W5ysOvAgZVrAhOx4PGY9yovOVAmE0D0J0ld92/
+
+  tasks:
+  - name: Change root password
+    become: yes   # activate privilege escalation
+    user:
+      name: root
+      update_password: always
+      password: "{{ root_password }}" # set root password to this crypted value
+
+  - name: Create local user
+    become: yes # activate privilege escalation
+    # http://docs.ansible.com/ansible/latest/user_module.html
+    user:
+      append: yes # will only add groups
+      createhome: yes # home directory will be made for the user
+      groups: "{{ item.groups | default(omit) }}" # Puts the user in list of groups
+      name: "{{ item.user }}" # Name of the user to create
+      password: "{{ item.password | default(omit) }}" # set the user's password to this crypted value
+      state: present
+      uid: "{{ item.uid | default(omit) }}" # Optionally sets the UID of the user
+      update_password: on_create # will only set the password for newly created users.
+    with_items: "{{ local_accounts_create | default([]) }}"
+
+  - name: Add SSH authorized keys
+    become: yes # activate privilege escalation
+    become_user: "{{ item.user }}"
+    authorized_key:
+      exclusive: no # Whether to remove all other non-specified keys from the authorized_keys file
+      key: "{{ item.sshpubkey }}" #  SSH public key(s)
+      manage_dir: no # Whether this module should manage the directory of the authorized key file
+      state: present
+      user: "{{ item.user }}"
+    with_items: "{{ local_accounts_create | default([])}}"
+    when: item.sshpubkey is defined
+
+  - name: Ensure /etc/sudoers.d directory is present
+    become: yes # activate privilege escalation
+    file:
+      path: /etc/sudoers.d
+      state: directory
+
+  - name: Ensure /etc/sudoers.d drop-in files are read
+    become: yes # activate privilege escalation
+    lineinfile:
+      dest: /etc/sudoers
+      regexp: '#includedir\s+/etc/sudoers.d'
+      line: "#includedir /etc/sudoers.d"   # not a comment
+      validate: '/usr/sbin/visudo -cf %s'   # use full path for validation
+
+  - name: Allow 'wheel' group to have passwordless sudo
+    become: yes # activate privilege escalation
+    lineinfile:
+      dest: /etc/sudoers.d/wheel
+      state: present
+      create: yes
+      regexp: '^%wheel'
+      line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+      validate: '/usr/sbin/visudo -cf %s'   # use full path for validation
+
+  - name: Ensure /etc/sudoers.d/wheel file has correct permissions
+    become: yes # activate privilege escalation
+    file:
+      path: /etc/sudoers.d/wheel
+      mode: 0440
+      state: file
+      owner: root
+      group: root

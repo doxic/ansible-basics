@@ -84,7 +84,11 @@ Playbook: the entry point for Ansible provisionings, where the automation is def
 * **Handlers**: used to trigger service status changes, like restarting or stopping a service
 
 ### Vagrant
+Get ssh information with `vagrant ssh` or login directly via putty `vagrant putty`
+
+
 Environment variable for hosts file `export ANSIBLE_HOSTS=/vagrant/provisioning/inventory`
+Environment variable for ansible.cfg file `export ANSIBLE_CONFIG=/vagrant/provisioning/ansible.cfg`
 
 ### Hardening
 
@@ -93,5 +97,13 @@ sudo ansible-galaxy install openmicroscopy.local-accounts
 
 
 
+## Concepts
+1. Vagrant with ansible_local provisioning script (windows-proof)
+2. Set root password with prehashed SHA512 string
+
+
+
+
 ## References
 * [Best Practices — Ansible Documentation](http://docs.ansible.com/ansible/playbooks_best_practices.html#how-to-differentiate-staging-vs-production)
+* Ansible security best practices - Server Fault: https://serverfault.com/questions/823956/ansible-security-best-practices/823991
