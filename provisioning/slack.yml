@@ -1,0 +1,5 @@
+---
+- name: Configure Slack SSH login notifications
+  hosts: all
+  roles:
+    - role: doxic.slack

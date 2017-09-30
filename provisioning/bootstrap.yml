@@ -1,5 +1,5 @@
 ---
-- hosts: localhost
+- hosts: all
 
   vars:
   # python -c 'import crypt; print crypt.crypt("REPLACE_WITH_PASSWORD", crypt.mksalt(crypt.METHOD_SHA512))'
@@ -7,7 +7,7 @@
   - local_accounts_create:
     - user: dominic
       groups: wheel
-      sshpubkey: "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAxrnYzsGQIw2j0GfHJh+te1wskKkxNijWuYNPpTmVRxU+XnkgWmMKPD+Pk6Sl8PjG070EUSibbYv7U4ZZ4/ybSsn7BTXjigzXAJdaIHZ8zRZV1LclChe5jtpJzqWxgg9ji/pY2rE3VHd74zJJxJb9pmp3iKGh1tY4zRcoyDsfo2/93UueXn03ZRtyD9NqP/lX00uZAZ0u0hnYFiXgLnXkTFn0GupCP5dNTreN5wT9B0uAiNNoTBtReMwNrofGMzdmY+J/kJ5vaBTdrjwdhScqXUl+YD65cJiMIBovTVeut6T0xFsFXXok4oeYdHUbI4238uL5/1hoan2KK3mcI/rztw== rsa-key-bootstrap"
+      sshpubkey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEMCfARkuKYnnB1cGlrdTExWGZcQtyYTvs6nt7DrtV1s dominic@test-20170930"
       # python -c 'import crypt; print crypt.crypt("REPLACE_WITH_PASSWORD", crypt.mksalt(crypt.METHOD_SHA512))'
       password: $6$MDZgQU2aWT3/dyqh$nV.coXsDC.ds0/KCoSRs8xsaxYTgnGFpCe.kEoDl8tu4Qy/9W5ysOvAgZVrAhOx4PGY9yovOVAmE0D0J0ld92/
 

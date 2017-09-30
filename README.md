@@ -84,10 +84,10 @@ Playbook: the entry point for Ansible provisionings, where the automation is def
 * **Handlers**: used to trigger service status changes, like restarting or stopping a service
 
 ### Vagrant
-Get ssh information with `vagrant ssh` or login directly via putty `vagrant putty`
+Get ssh information with `vagrant ssh-config` or login directly via putty `vagrant putty`
 
 
-Environment variable for hosts file `export ANSIBLE_HOSTS=/vagrant/provisioning/inventory`
+Environment variable for hosts file `export ANSIBLE_HOSTS=/vagrant/provisioning/hosts`
 Environment variable for ansible.cfg file `export ANSIBLE_CONFIG=/vagrant/provisioning/ansible.cfg`
 
 ### Hardening
@@ -100,10 +100,30 @@ sudo ansible-galaxy install openmicroscopy.local-accounts
 ## Concepts
 1. Vagrant with ansible_local provisioning script (windows-proof)
 2. Set root password with prehashed SHA512 string
+3. Create local user accounts with long and complex passwords
+4. Add local SSH keys
+5. Harden ssh client
+6. Harden ssh server
+7. Posting successful SSH logins to Slack
 
+### SSH keys
+SSH keys are always generated in pairs with one known as the private key and the other as the public key. The private key is known only to you and it should be safely guarded. A private key is a guarded secret and as such it is advisable to store it on disk in an encrypted form. [SSH keys - ArchWiki]
 
+#### ed25519
+We use a ed25519 elliptic curve signature scheme which rely on the elliptic curve discrete logarithm problem, its main strengths are its speed, its constant-time run time and resistance against side-channel attacks.
+
+Ed25519 key pairs can be generated with `ssh-keygen -t ed25519 -C "$(whoami)@$(hostname)-$(date +%Y%m%d)"  -f $HOME/.ssh/id_ed25519 -N ""`
+#### RSA with Yubikey
+**TODO**
+
+### Slack Notifications
+Setup Incoming Web Hook via https://YOUR_DOMAIN.slack.com/apps/manage/custom-integrations  
 
 
 ## References
 * [Best Practices — Ansible Documentation](http://docs.ansible.com/ansible/playbooks_best_practices.html#how-to-differentiate-staging-vs-production)
-* Ansible security best practices - Server Fault: https://serverfault.com/questions/823956/ansible-security-best-practices/823991
+* [Ansible security best practices - Server Fault](https://serverfault.com/questions/823956/ansible-security-best-practices/823991)
+* [SSH keys - ArchWiki](https://wiki.archlinux.org/index.php/SSH_keys)
+* [Ed25519 Keys | Brian Warner](https://blog.mozilla.org/warner/2011/11/29/ed25519-keys/)
+* [PGP and SSH keys on a Yubikey NEO « Eric Severance](https://www.esev.com/blog/post/2015-01-pgp-ssh-key-on-yubikey-neo/)
+* [Posting successful SSH logins to Slack](http://sandrinodimattia.net/posting-successful-ssh-logins-to-slack/)

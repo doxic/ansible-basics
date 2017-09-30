@@ -1,0 +1,4 @@
+---
+slack_webhook_url: ""
+slack_notify_channel: "#general"
+slack_notify_ssh_bot_name: "bashbot"
