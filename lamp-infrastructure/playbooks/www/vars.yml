@@ -1,0 +1,9 @@
+---
+firewall_allowed_tcp_ports:
+  - "22"
+  - "80"
+
+apache_vhosts:
+  # Additional properties:
+  # 'serveradmin, serveralias, allow_override, options, extra_parameters'.
+  - servername: "www1.test"

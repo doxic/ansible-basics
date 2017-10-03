@@ -1,0 +1,7 @@
+---
+# ansible-galaxy install -r requirements.yml
+- src: geerlingguy.firewall
+- src: geerlingguy.haproxy
+- src: geerlingguy.apache
+- src: geerlingguy.php
+- src: geerlingguy.php-mysql

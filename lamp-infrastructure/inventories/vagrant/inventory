@@ -1,0 +1,16 @@
+[lamp-haproxy]
+192.168.100.100 ansible_ssh_private_key_file=/vagrant/.vagrant/machines/haproxy.test/virtualbox/private_key
+
+[lamp-www]
+192.168.100.101 ansible_ssh_private_key_file=/vagrant/.vagrant/machines/www1.test/virtualbox/private_key
+192.168.100.102 ansible_ssh_private_key_file=/vagrant/.vagrant/machines/www2.test/virtualbox/private_key
+
+[a4d.lamp.db.1]
+192.168.100.103
+
+[lamp-db]
+192.168.100.103 mysql_replication_role=master ansible_ssh_private_key_file=/vagrant/.vagrant/machines/db1.test/virtualbox/private_key
+192.168.100.104 mysql_replication_role=slave ansible_ssh_private_key_file=/vagrant/.vagrant/machines/db2.test/virtualbox/private_key
+
+[ansible-controller]
+localhost  ansible_connection=local

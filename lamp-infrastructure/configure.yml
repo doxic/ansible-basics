@@ -1,0 +1,3 @@
+---
+- include: playbooks/haproxy/main.yml
+- include: playbooks/www/main.yml

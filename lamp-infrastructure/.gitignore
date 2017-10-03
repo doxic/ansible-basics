@@ -1,0 +1,4 @@
+### Vagrant ###
+.vagrant/
+### Ansible ###
+roles/geerlingguy*

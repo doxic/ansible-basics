@@ -1,0 +1,15 @@
+---
+firewall_allowed_tcp_ports:
+  - "22"
+  - "80"
+
+haproxy_backend_servers:
+  - name: www1.test
+    address: 192.168.100.101:80
+  - name: www2.test
+    address: 192.168.100.102:80
+
+haproxy_backend_name: 'habackend'
+haproxy_backend_mode: 'http'
+haproxy_backend_balance_method: 'roundrobin'
+haproxy_backend_httpchk: ''
