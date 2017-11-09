@@ -1,0 +1,10 @@
+---
+firewall_allowed_tcp_ports:
+  - "22"
+  - "9191"
+
+  # Allow only the IP 167.89.89.18 to access port 4949 (Munin).
+firewall_additional_rules:
+  - "iptables -t nat -A PREROUTING -p tcp --dport 9191 -m state --state NEW -j DNAT --to-destination 127.0.0.1:9191"
+
+config_path: /vagrant/ansible.cfg

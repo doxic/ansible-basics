@@ -1,0 +1,6 @@
+---
+
+graylog_password_secret: Gahfoh1ooqu9toxai8lah2xingooVohgae1aorich7faengaJaegh8yaeNgeeT0eiNgohs9phais6phae8Chahpoogho5aic
+graylog_root_password_sha2: 5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8
+graylog_elasticsearch_shards: 4
+graylog_elasticsearch_replicas: 0

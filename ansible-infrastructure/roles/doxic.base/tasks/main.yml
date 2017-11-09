@@ -1,0 +1,5 @@
+---
+
+- include: create_swap_file.yml
+  when: create_swap_file
+  tags: swap

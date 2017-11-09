@@ -1,0 +1,14 @@
+---
+
+- name: Provision a Graylog server
+  hosts: graylog2_servers
+  become: yes
+
+  vars_files:
+    - vars.yml
+
+  roles:
+    - doxic.base
+    #- certbot
+    - doxic.graylog
+    #- nginx

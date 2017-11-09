@@ -1,24 +1,22 @@
 ---
 
-- name: haproxy.test
-  box: centos/7
+#- name: ara
+#  box: centos/7
+#  memory: 512
+#  cpu: 1
+#  sync_disabled: true
+#  ip_addr:
+#    - 192.168.100.100
+
+- name: elk
+  box: geerlingguy/ubuntu1604
   memory: 512
   cpu: 1
   sync_disabled: true
   ip_addr:
     - 192.168.100.100
-  forwarded_port:
-    - 80
 
-- name: www1.test
-  box: centos/7
-  memory: 512
-  cpu: 1
-  sync_disabled: true
-  ip_addr:
-    - 192.168.100.101
-
-- name: www2.test
+- name: www1
   box: centos/7
   memory: 512
   cpu: 1
@@ -26,22 +24,23 @@
   ip_addr:
     - 192.168.100.102
 
-- name: db1.test
-  box: centos/7
-  memory: 512
-  cpu: 1
-  ip_addr:
-    - 192.168.100.103
-
-- name: db2.test
+- name: www2
   box: centos/7
   memory: 512
   cpu: 1
   sync_disabled: true
   ip_addr:
+    - 192.168.100.103
+
+- name: gry1
+  box: geerlingguy/ubuntu1604
+  memory: 4096
+  cpu: 1
+  sync_disabled: true
+  ip_addr:
     - 192.168.100.104
 
-- name: controller.test
+- name: controller
   box: centos/7
   memory: 512
   cpu: 1
@@ -50,8 +49,6 @@
   ansible.playbook: configure.yml
   ansible.limit: all
   ansible.inventory_path: inventories/vagrant/inventory
-  #ansible.provisioning_path: /vagrant/lamp-infrastructure
-  ansible.requirements: requirements.yml
 
 # sample
 # - name: kvm-01

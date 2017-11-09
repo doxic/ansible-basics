@@ -8,3 +8,7 @@
   roles:
     - geerlingguy.firewall
     - geerlingguy.haproxy
+
+  tasks:
+    - name: Ensure socat is installed.
+      yum: name=socat state=installed

@@ -1,0 +1,15 @@
+[elk]
+elk1 ansible_ssh_host=192.168.100.100 ansible_ssh_private_key_file=/vagrant/.vagrant/machines/elk/virtualbox/private_key
+
+[lb]
+lb1 ansible_ssh_host=192.168.100.101 ansible_ssh_private_key_file=/vagrant/.vagrant/machines/lb1/virtualbox/private_key
+
+[www]
+www1 ansible_ssh_host=192.168.100.102 ansible_ssh_private_key_file=/vagrant/.vagrant/machines/www1/virtualbox/private_key
+www2 ansible_ssh_host=192.168.100.103 ansible_ssh_private_key_file=/vagrant/.vagrant/machines/www2/virtualbox/private_key
+
+[graylog2_servers]
+gry1.example.com ansible_ssh_host=192.168.100.104 ansible_ssh_private_key_file=/vagrant/.vagrant/machines/gry1/virtualbox/private_key
+
+[controller]
+localhost  ansible_connection=local

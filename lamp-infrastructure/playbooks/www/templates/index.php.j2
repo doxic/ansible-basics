@@ -22,22 +22,6 @@ foreach ($mysql_servers as $host) {
   }
 }
 
-// Connect to Memcached.
-$memcached_result = '<span style="color: red;">FAIL</span>';
-if (class_exists('Memcached')) {
-  $memcached = new Memcached;
-  $memcached->addServer('{{ groups['lamp-memcached'][0] }}', 11211);
-
-  // Test adding a value to memcached.
-  if ($memcached->add('test', 'success', 1)) {
-    $result = $memcached->get('test');
-    if ($result == 'success') {
-      $memcached_result = '<span style="color: green;">PASS</span>';
-      $memcached->delete('test');
-    }
-  }
-}
-
 /**
  * Connect to a MySQL server and test the connection.
  *

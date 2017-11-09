@@ -1,0 +1,13 @@
+---
+- hosts: controller
+  become: yes
+
+  vars_files:
+    - vars.yml
+
+  roles:
+    #- doxic.ara
+    #- geerlingguy.firewall
+    #- geerlingguy.php
+
+  tasks: []

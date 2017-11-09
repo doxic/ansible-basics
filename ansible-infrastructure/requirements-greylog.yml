@@ -1,0 +1,19 @@
+# graylog2
+# ansible-galaxy install -r requirements-greylog.yml
+- src: Graylog2.graylog-ansible-role
+  version: master
+
+# graylog2 dependency
+
+- src: lesmyrmidons.mongodb
+  version: master
+
+- src: geerlingguy.java
+  version: master
+
+# 0.2 is required version to use elasticsearch 2.x
+- src: elastic.elasticsearch
+  version: "0.2"
+
+- src: jdauphant.nginx
+  version: master

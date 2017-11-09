@@ -1,0 +1,4 @@
+---
+# file: inventories/vagrant/group_vars/all
+# this is the site wide default
+ansible_user: vagrant

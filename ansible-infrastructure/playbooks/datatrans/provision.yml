@@ -1,0 +1,144 @@
+---
+- hosts: all
+  become: yes
+
+  vars:
+    fqdn: "{{ inventory_hostname }}"
+    hostname: "{{ inventory_hostname_short }}"
+
+    ntp_daemon: ntpd
+    ntp_enabled: true
+    ntp_timezone: Europe/Zurich
+    ntp_manage_config: true
+    ntp_area: '.ch'
+    ntp_servers:
+      - "0{{ ntp_area }}.pool.ntp.org iburst"
+      - "1{{ ntp_area }}.pool.ntp.org iburst"
+      - "2{{ ntp_area }}.pool.ntp.org iburst"
+      - "3{{ ntp_area }}.pool.ntp.org iburst"
+    ntp_restrict:
+      - "127.0.0.1"
+      - "::1"
+
+  tasks:
+
+  #
+  # EPEL Repo
+  #
+  # http://docs.ansible.com/ansible/latest/yum_repository_module.html
+  - name: Add repository
+    yum_repository:
+      name: epel
+      description: EPEL YUM repo
+      baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+
+  #
+  # SElinux
+  #
+  # https://github.com/flmmartins/ansible-disable-selinux
+  - name: Install libselinux as prerequisite for SELinux Ansible module
+    yum:
+      name: "{{item}}"
+      state: latest
+    with_items:
+      - libselinux-python
+      - libsemanage-python
+
+  - name: Set SELinux in permissive mode until the machine is rebooted
+    command: setenforce 0
+    ignore_errors: true
+    changed_when: false
+
+    #
+    # hostname
+    #
+    # https://github.com/holms/ansible-fqdn
+  - name: Set Hostname with hostname command
+    hostname:
+      name: "{{ hostname }}"
+    notify:
+      - restart hostname
+      - restart systemd-logind
+
+  - name: Re-gather facts
+    action: setup
+    when: ansible_hostname != fqdn
+
+  - name: Build hosts file (backups will be made)
+    lineinfile:
+      dest: /etc/hosts
+      regexp: "^{{ ansible_default_ipv4.address }}"
+      line: "{{ ansible_default_ipv4.address }} {{ fqdn }} {{ hostname }}"
+      state: present
+      backup: yes
+    when: ansible_default_ipv4.address is defined
+    notify:
+      - restart hostname
+      - restart systemd-logind
+
+  #
+  # NTP
+  #
+  # https://github.com/geerlingguy/ansible-role-ntp/
+  - name: Ensure NTP-related packages are installed.
+    package:
+      name: ntp
+      state: present
+
+  - name: Ensure tzdata package is installed (Linux).
+    package:
+      name: tzdata
+      state: present
+    when: ansible_system == "Linux"
+
+  - name: Set timezone
+    timezone:
+      name: "{{ ntp_timezone }}"
+
+  - name: Ensure NTP is running and enabled as configured.
+    service:
+      name: "{{ ntp_daemon }}"
+      state: started
+      enabled: yes
+    when: ntp_enabled
+
+  - name: Ensure NTP is stopped and disabled as configured.
+    service:
+      name: "{{ ntp_daemon }}"
+      state: stopped
+      enabled: no
+    when: not ntp_enabled
+
+  - name: Generate ntp.conf file
+    template:
+      src: ntp.conf.j2
+      dest: /etc/ntp.conf
+    notify: restart ntp
+    when: ntp_manage_config
+
+
+  handlers:
+  - name: restart hostname
+    service:
+      name: "hostname{{ '.sh' if (ansible_distribution_release == 'wheezy') else '' }}"
+      state: restarted
+    when: >
+      ansible_os_family != 'RedHat'
+      and ansible_service_mgr != 'systemd'
+
+  - name: restart systemd-logind
+    service:
+      name: systemd-logind
+      state: restarted
+    when: >
+      ansible_os_family != 'RedHat'
+      and ansible_service_mgr == 'systemd'
+
+  - name: reboot
+    command: /sbin/reboot
+
+  - name: restart ntp
+    service:
+      name: "{{ ntp_daemon }}"
+      state: restarted
+    when: ntp_enabled
