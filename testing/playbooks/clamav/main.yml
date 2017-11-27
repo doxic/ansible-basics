@@ -1,0 +1,71 @@
+---
+- hosts: all
+  gather_facts: false
+
+  vars:
+    clamav_daily_cron_enabled: true
+    clamav_logfile: /var/log/clamav/clamav.log
+    clamav_mail_notification: dominic.ruettimann@gmail.com
+
+  tasks:
+  - name: epel | install
+    package:
+      name: epel-release
+      state: present
+
+  - name: clamav | Ensure clamav & clamav-update is installed
+    package:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - clamav
+      - clamav-update
+
+  - name: Remove 'Example' line from ClamAV configuration files
+    lineinfile:
+      dest: "{{ item }}"
+      regexp: "^Example"
+      state: absent
+    with_items:
+      - /etc/freshclam.conf
+
+  - name: Allow automatic freshclam updates
+    lineinfile:
+      dest: /etc/sysconfig/freshclam
+      regexp: "^FRESHCLAM_DELAY"
+      state: absent
+
+  - name: Update ClamAV database
+    command: freshclam
+    changed_when: False
+    async: 300
+    poll: 5
+
+  - name: clamav | create /var/log/clamav
+    file:
+      path: /var/log/clamav/
+      state: directory
+
+  - name: clamav | Create daily scan script
+    template:
+      src: daily_clamav_scan.sh.j2
+      dest: /usr/local/bin/daily_clamav_scan.sh
+      owner: root
+      group: root
+      mode: '0770'
+    when: clamav_daily_cron_enabled
+
+  - name: clamav | Schedule daily scan
+    cron:
+      name: 'Execute Daily ClamAV Scan'
+      special_time: daily
+      state: 'present'
+      user: root
+      job: '/usr/local/bin/daily_clamav_scan.sh'
+      cron_file: 'clamav_daily'
+    when: clamav_daily_cron_enabled
+
+  - name: clamav | Copy logrotate.d/clamav file
+    copy:
+      src: logrotate_clamav
+      dest: /etc/logrotate.d/clamav

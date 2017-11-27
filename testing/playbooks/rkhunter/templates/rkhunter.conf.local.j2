@@ -1,0 +1,14 @@
+# Notifications
+MAIL-ON-WARNING="{{ rkhunter_mail_on_warning }}"
+MAIL_CMD={{ rkhunter_mail_cmd }}
+
+# Logging
+LOGFILE=/var/log/rkhunter/rkhunter.log
+
+## Configure RKHunter Known-Good Values
+
+# Allow the specified process to use deleted files.
+ALLOWPROCDELFILE=/usr/bin/python2.7
+
+# Allow the specified process to listen on any network interface.
+ALLOWPROCLISTEN=/usr/sbin/dhclient

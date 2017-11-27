@@ -1,0 +1,38 @@
+---
+- hosts: all
+  gather_facts: false
+
+  vars:
+    postfix_sparkpost_api_key: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          34616230373934633562616137666333363639663435626539643961346463353038353731356138
+          6466663934373433646666656538623835373561313436380a353736336134633834376535626133
+          66623938383863613833653531623938333433653565393763323466396238306663663439646163
+          3838363239653364370a366662323633646165383831643431646231663033313038346666306139
+          36383335346138613362636432363339646235303237343335393561306634646464343939303630
+          6366666664656563623030623134616534386537313361373130
+
+  tasks:
+  - name: postfix | Ensure postfix is installed
+    yum: name=postfix state=installed
+    #when: ansible_os_family == 'RedHat'
+
+  - name: postfix | Ensure mailx is installed
+    yum: name=mailx state=installed
+
+  - name: postfix | Ensure SASL authentication framework is installed
+    yum: name=cyrus-sasl-plain state=installed
+
+  - name: postfix | generate main.cf
+    template:
+      src: main.cf
+      dest: /etc/postfix/main.cf
+      backup: yes
+    notify: restart postfix
+
+  - name: postfix | Ensure postfix is started and enabled at boot.
+    service: name=postfix state=started enabled=yes
+
+  handlers:
+  - name: restart postfix
+    service: name=postfix state=restarted

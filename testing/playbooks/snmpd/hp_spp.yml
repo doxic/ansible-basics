@@ -1,0 +1,16 @@
+---
+
+  - name: Add Service Pack for ProLiant YUM repository
+    yum_repository:
+      name: SPP
+      description: Service Pack for ProLiant YUM repo
+      baseurl: "{{ spp_baseurl }}"
+      gpgkey: "{{ spp_gpgkey_url }}"
+      gpgcheck: "{{ spp_enable_gpgcheck_repo }}"
+
+  - name: Install hp-snmp-agents
+    package:
+      name: hp-snmp-agents
+      state: "present"
+    tags:
+      - snmpd

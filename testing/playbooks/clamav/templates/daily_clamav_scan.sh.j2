@@ -1,0 +1,35 @@
+#!/bin/bash
+
+###############################################################################
+# ClamAV Daily Scan
+###############################################################################
+
+/usr/bin/freshclam &>> {{ clamav_logfile }}
+
+echo "Starting ClamAV Scan at $(date)" &>> {{ clamav_logfile }}
+
+# --archive-verbose // see the filenames of infected files inside a scanned archive
+# --recursive //  Scan directories recursively.
+# --infected //  Only print infected files.
+
+#clamscan --infected --recursive=yes --exclude-dir={ clamav_daily_cron_exclusions|join(' --exclude-dir=') }} / &>> { clamav_clamd_config.LogFile }}
+/usr/bin/clamscan --recursive --infected --archive-verbose \
+  --exclude-dir=^/proc/ \
+  --exclude-dir=^/sys/ \
+  --exclude-dir=^/run/ \
+  --exclude-dir=^/dev/ / &>> {{ clamav_logfile }}
+
+case $? in
+  1)
+	cat {{ clamav_logfile }} | mail -s "[clamav] Virus Detected! $(hostname)" {{ clamav_mail_notification }}
+  ;;
+  2)
+	cat {{ clamav_logfile }} | mail -s "[clamav] Error Occured! $(hostname)" {{ clamav_mail_notification }}
+  ;;
+  *)
+    echo "No Viruses Detected!"
+  ;;
+esac
+
+FINISH_TIME=`date`
+echo "Finished ClamAV Scan at $(date)" &>> {{ clamav_logfile }}

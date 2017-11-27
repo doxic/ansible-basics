@@ -1,0 +1,10 @@
+/var/log/clamav/clamav.log {
+    daily
+    missingok
+    dateext
+    rotate 256
+    compress
+    delaycompress
+    notifempty
+    create 640 root root
+}

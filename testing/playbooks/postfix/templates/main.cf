@@ -1,0 +1,11 @@
+# Basic settings
+#myorigin = $mydomain
+myorigin = doxic.io
+
+# Sparkpost
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = static:SMTP_Injection:{{ postfix_sparkpost_api_key }}
+relayhost = [smtp.sparkpostmail.com]:587
+smtp_sasl_security_options = noanonymous
+smtp_tls_security_level = encrypt
+header_size_limit = 4096000

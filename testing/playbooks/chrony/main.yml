@@ -1,0 +1,60 @@
+---
+- hosts: all
+
+#chronyc makestep 0.1 1
+#chronyc burst 1/2
+
+  vars:
+    # Service names
+    chrony_service: chronyd
+    # Configuration file paths
+    chrony_conf_file: /etc/chrony.conf
+    # Enable chrony for NTP time synchronization.
+    security_rhel7_enable_chrony: yes
+    # Use the following NTP servers.
+    security_ntp_servers:
+      - 0.pool.ntp.org
+      - 1.pool.ntp.org
+      - 2.pool.ntp.org
+      - 3.pool.ntp.org
+    # Chrony limits access to clients that are on certain subnets.
+    security_allowed_ntp_subnets:
+      - 10/8
+      - 192.168/16
+      - 172.16/12
+    # Listen for NTP requests only on local interfaces.
+    security_ntp_bind_local_interfaces_only: yes
+
+  tasks:
+
+  - name: Start and enable chrony
+    service:
+      name: "{{ chrony_service }}"
+      state: started
+      enabled: yes
+    when:
+      - not ansible_check_mode
+      - security_rhel7_enable_chrony | bool
+
+  - name: Check if chrony configuration file exists
+    stat:
+      path: "{{ chrony_conf_file }}"
+    register: chrony_conf_check
+    tags:
+      - always
+
+  - name: Synchronize system clock (configuration file)
+    template:
+      src: chrony.conf.j2
+      dest: "{{ chrony_conf_file }}"
+    when:
+      - chrony_conf_check.stat.exists
+      - security_rhel7_enable_chrony | bool
+    notify:
+      - restart chrony
+
+  handlers:
+  - name: restart chrony
+    service:
+      name: "{{ chrony_service }}"
+      state: restarted

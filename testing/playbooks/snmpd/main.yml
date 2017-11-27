@@ -1,0 +1,24 @@
+---
+- hosts: all
+# https://github.com/CSCfi/ansible-role-hp-spp
+
+  vars:
+    # Enable GPG checks for packages and repository data.
+    spp_enable_gpgcheck_repo: yes
+    # HPE Public Keys for packages published after 2015	fingerprint: 26C2B797
+    spp_gpgkey_url: https://downloads.linux.hpe.com/SDR/hpePublicKey2048_key1.pub
+    spp_baseurl: https://downloads.linux.hpe.com/repo/spp/rhel/$releasever/$basearch/current
+
+  tasks:
+  - import_tasks: hp_spp.yml
+    #when: ansible_system_vendor == "HP" and ansible_product_name == "ProLiant"
+
+  - name: installing snmpd
+    package:
+      name: "{{ item }}"
+      state: "present"
+    tags:
+      - snmpd
+    with_items:
+      - net-snmp
+      - net-snmp-utils

@@ -1,0 +1,53 @@
+---
+- hosts: all
+  gather_facts: false
+
+  vars:
+    rkhunter_allow_ssh_root_user: without-password
+    rkhunter_mail_on_warning: dominic.ruettimann@gmail.com
+    rkhunter_mail_cmd: mail -s "[rkhunter] Warnings found for ${HOST_NAME}"
+
+  tasks:
+  - name: epel | install
+    package:
+      name: epel-release
+      state: present
+
+  - name: rkhunter | install
+    package:
+      name: rkhunter
+      state: present
+    notify: update rkhunter properties database
+
+  - name: rkhunter | create /var/log/rkhunter
+    file:
+      path: /var/log/rkhunter
+      state: directory
+
+  - name: rkhunter | Generate rkhunter.conf.local file
+    template:
+      src: rkhunter.conf.local.j2
+      dest: /etc/rkhunter.conf.local
+      #validate: 'rkhunter --config-check --configfile %s'
+    notify: update rkhunter properties database
+
+  - name: rkhunter | cronjob
+    cron:
+      name: 'Execute Daily Rkhunter Scan'
+      special_time: daily
+      state: 'present'
+      user: root
+      job: "/usr/bin/rkhunter --cronjob --update --quiet"
+      cron_file: 'rkhunter_daily'
+
+  - name: rkhunter | Copy logrotate.d/rkhunter file
+    copy:
+      src: logrotate_rkhunter
+      dest: /etc/logrotate.d/rkhunter
+
+#  - name: rkhunter | splunkforwarder
+
+  handlers:
+  - name: update rkhunter properties database
+    command: rkhunter --propupd
+    tags: rkhunter
